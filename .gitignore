@@ -1,0 +1,66 @@
+# Python 缓存
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# 环境变量配置 (保护 API Key)
+.env
+.env.*
+!.env.example
+
+# 虚拟环境
+venv/
+env/
+.venv/
+venv310/
+
+# 运行时产生的临时音视频、图片文件
+*.wav
+*.mp4
+# 排除掉默认素材，保留它们 (在前面加 ! 表示不忽略)
+!default_avatar.png
+!assets/*.mp3
+!assets/*.png
+!screenshot.png
+!screenshot2.png
+
+# AI 代码打包工具生成的临时文件
+repomix-output.xml
+repomix-instruction.md
+
+# IDE 配置缓存
+.vscode/
+.idea/
+
+# 操作系统生成的缩略图或索引文件
+.DS_Store
+Thumbs.db
+
+# Gradio 运行时缓存
+.gradio/
+flagged/
+
+# 测试缓存
+.pytest_cache/
+.coverage
+htmlcov/
+
+# 备份文件夹
+*副本/
+*backup/
+*.backup.*
+
+# PDF 文档（太大，不适合放仓库）
+*.pdf
+
+# 临时 3D 模型文件
+*.glb
+
+# 中文命名的临时图片
+图片*.png
+
+# 临时文件
+*.tmp
+*.temp
+nul

@@ -1,0 +1,10 @@
+{
+  "title": "VirtualHumanApp - 虚拟人互动 Demo",
+  "sdk": "gradio",
+  "sdk_version": "4.44.1",
+  "app_file": "app.py",
+  "license": "MIT",
+  "colorFrom": "indigo",
+  "colorTo": "purple",
+  "short_description": "AI虚拟人陪伴系统 - Multi-Agent架构 · 语音对话 · 3D数字人 · 情感分析 · 记忆系统"
+}
