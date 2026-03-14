@@ -125,6 +125,12 @@ def analyze_facial_emotion_from_image(image_path: str, api_key: str = "") -> dic
 
 
 def analyze_voice_emotion_from_audio(audio_path: str, api_key: str = "") -> dict:
-    """ASR transcribe audio then analyze text emotion."""
-    from services.asr import recognize_speech
-    return recognize_speech(audio_path, api_key)
+    """使用千问模型提取视频中的语音情感特征"""
+    from services.asr import recognize_speech_and_emotion
+    # recognize_speech_and_emotion 已经返回了 {"text": xxx, "voice_emotion": xxx} 格式
+    result = recognize_speech_and_emotion(audio_path, api_key)
+    return {
+        "text": result.get("text", ""),
+        "emotion": result.get("voice_emotion", "neutral"),
+        "confidence": 0.8  # 千问模型暂未在顶层直接返回情感置信度，设定基础高置信
+    }

@@ -102,4 +102,7 @@ if __name__ == "__main__":
         server_name="0.0.0.0",
         server_port=7860,
         allowed_paths=[_ASSETS_DIR],
+        # 添加下面这两行规避跨域 Worker 限制
+        share=False,
+        inline=False
     )

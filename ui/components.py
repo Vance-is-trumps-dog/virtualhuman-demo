@@ -83,7 +83,7 @@ def format_pipeline_status(steps):
 
 
 def format_fusion_result(result):
-    """Format multimodal fusion result as HTML."""
+    """Format multimodal fusion result as HTML with danger alert support."""
     em = result.get("emotion", "neutral")
     val = result.get("valence", 0)
     aro = result.get("arousal", 0)
@@ -97,9 +97,16 @@ def format_fusion_result(result):
     aro_pct = int((aro + 1) / 2 * 100)
     conf_pct = int(conf * 100)
 
+    # 🛡️ 检测危险情感，应用警报样式
+    is_danger = em in ["angry", "fearful"]
+    container_class = "danger-alert" if is_danger else ""
+    alert_indicator = '<span class="alert-indicator"></span>' if is_danger else ''
+    emotion_class = "emotion-alert-text" if is_danger else ""
+
     return f"""
-    <div style="padding:16px;border-radius:12px;background:linear-gradient(135deg,rgba(102,126,234,0.08),rgba(118,75,162,0.08));border:1px solid rgba(102,126,234,0.2);">
-      <div style="font-size:18px;font-weight:bold;margin-bottom:10px;">🎯 融合情感: {emoji} {em}</div>
+    <div class="{container_class}" style="padding:16px;border-radius:12px;background:linear-gradient(135deg,rgba(102,126,234,0.08),rgba(118,75,162,0.08));border:1px solid rgba(102,126,234,0.2);">
+      <div class="{emotion_class}" style="font-size:18px;font-weight:bold;margin-bottom:10px;">{alert_indicator}🎯 融合情感: {emoji} {em}</div>
+      {('<div style="background:#ff0000;color:#fff;padding:8px;border-radius:6px;margin-bottom:10px;font-weight:bold;text-align:center;">⚠️ 警觉状态：检测到对方情绪异常，请注意防范！</div>' if is_danger else '')}
       <div style="margin:6px 0;">
         <div style="font-size:13px;color:#666;">📊 效价 (Valence): {val:.2f}</div>
         <div class="fusion-bar"><div class="fusion-bar-fill" style="width:{val_pct}%;"></div></div>
@@ -118,3 +125,42 @@ def format_fusion_result(result):
       </div>
     </div>
     """
+
+
+def format_workplace_summary(asr_text, ai_reply, emotion="neutral"):
+    """Format workplace summary with highlight style for accessibility."""
+    from config.settings import EMOJI_MAP # 确保引入
+    emoji = EMOJI_MAP.get(emotion, "😐")
+    is_danger = emotion in ["angry", "fearful"]
+
+    # 🛡️ 新增：极其醒目的"对方原话"展示区块
+    original_speech_html = f"""
+    <div style="background: rgba(255, 255, 255, 0.8); padding: 12px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #667eea; box-shadow: inset 0 0 5px rgba(0,0,0,0.05);">
+        <div style="font-size: 13px; color: #666; margin-bottom: 4px; font-weight: normal;">🗣️ 对方原话：</div>
+        <div style="font-size: 18px; color: #222; font-weight: normal; letter-spacing: 0.5px;">{asr_text}</div>
+    </div>
+    """
+
+    if is_danger:
+        return f"""
+        <div class="workplace-summary danger-alert">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+                <span class="alert-indicator"></span>
+                <span style="font-size:20px;">{emoji}</span>
+                <span style="font-size:18px;font-weight:bold;">⚠️ 职场警报</span>
+            </div>
+            {original_speech_html}
+            <div style="line-height:1.6;">{ai_reply}</div>
+        </div>
+        """
+    else:
+        return f"""
+        <div class="workplace-summary">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+                <span style="font-size:20px;">{emoji}</span>
+                <span style="font-size:18px;font-weight:bold;">📋 职场同传摘要</span>
+            </div>
+            {original_speech_html}
+            <div style="line-height:1.6;">{ai_reply}</div>
+        </div>
+        """

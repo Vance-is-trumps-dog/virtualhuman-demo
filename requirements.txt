@@ -2,5 +2,8 @@ gradio
 dashscope>=1.20.0
 requests>=2.28.0
 oss2>=2.18.0
+modelscope
+scipy
+numpy
 # System dependency: ffmpeg (for video/audio extraction)
 # Install: apt install ffmpeg (Linux) / brew install ffmpeg (Mac) / choco install ffmpeg (Windows)

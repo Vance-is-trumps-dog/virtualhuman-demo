@@ -23,20 +23,20 @@ _memory_executor = ThreadPoolExecutor(max_workers=1)
 
 # Suffix appended to system prompt for merged emotion extraction (perf optimization)
 _EMOTION_SUFFIX = (
-    "\n\n[多模态输出要求]\n"
-    "请务必结合你的【系统设定】、上下文【记忆】以及刚刚接收到的【用户多模态情感状态】进行回复。\n"
-    "在回复的最末尾（另起一行），你必须根据你此刻的回应态度，输出你的神态标签，格式严格为：\n"
+    "\n\n[严格输出格式要求]\n"
+    "你现在的身份是听障人士的【职场无障碍同传助理】。请结合上下文、捕捉到的声学情感，**以及你对这句话字面意思的深刻理解**，严格按以下格式输出：\n\n"
+    "📝 【核心意图】：(用最简短的大白话总结对方真实意图，指出是否在阴阳怪气，不超过30字)\n"
+    "💡 【应对建议】：(给听障用户的职场高情商回应建议，不超过30字)\n\n"
+    "在回复的最末尾（另起一行），你必须输出你**综合判定后最真实的对方情绪标签**，以触发虚拟人动作，格式严格为：\n"
     "<!--emotion:情感类型:置信度-->\n"
-    "可用的情感类型（将自动映射为 3D 动作）：\n"
-    "- happy (触发：面带微笑，风铃轻晃动作)\n"
-    "- excited (触发：表情夸张，身体大幅摇摆激动)\n"
-    "- sad (触发：面露悲伤，共情叹息动作)\n"
-    "- angry (触发：面带怒容，警觉注意动作)\n"
-    "- surprised (触发：惊讶表情，好奇歪头动作)\n"
-    "- fearful (触发：害怕神态，身体后倾)\n"
-    "- thinking (触发：皱眉沉思，思考停顿动作)\n"
-    "- neutral (触发：平静待机)\n"
-    "注意：置信度是 0.0 到 1.0 的数字。这行标签对系统底层动画极其重要，绝对不能省略！"
+    "情感类型必须是以下之一：\n"
+    "- happy (对方释放善意时)\n"
+    "- angry (对方语气愤怒/不耐烦/【阴阳怪气】/【说反话】/【批评】时，必须触发警报)\n"
+    "- sad (对方表达失落时)\n"
+    "- surprised (对方表达惊讶时)\n"
+    "- fearful (对方表达担忧/焦虑时)\n"
+    "- thinking (对方在陈述复杂逻辑时)\n"
+    "- neutral (日常陈述)\n"
 )
 
 _EMOTION_PATTERN = re.compile(r"<!--emotion:(\w+):([\d.]+)-->")
@@ -108,15 +108,12 @@ def chat_with_model(message, history, system_prompt_text, voice_id, api_key, mem
     # Inject emotion context
     if emotion_context:
         em = emotion_context.get("emotion", "neutral")
-        conf = emotion_context.get("confidence", 0.5)
-        val = emotion_context.get("valence", 0.0)
-        tag = emotion_context.get("action_tag", "idle")
-        suggestion = emotion_context.get("suggestion", "")
+        conf = emotion_context.get("confidence", 0.9)
         system_prompt += (
-            f"\n\n[用户情感状态]\n"
-            f"主要情感: {em} (置信度: {int(conf*100)}%)\n"
-            f"情感效价: {'正面' if val >= 0 else '负面'} ({val:.2f})\n"
-            f"建议回应动作: {tag} - {suggestion}\n"
+            f"\n\n[⚠️ 实时声学情感侦测参考]\n"
+            f"底层的声学模型初步检测到，刚才这段话的声带情绪是：【{em}】。\n"
+            f"**但请注意：声学模型经常漏掉人类的'阴阳怪气'或'冷嘲热讽'。**\n"
+            f"你需要结合这句话的【字面意思】进行综合判断。如果字面意思具有攻击性、反讽性（例如说别人是大笨蛋，或者明明搞砸了却夸奖），即使声学检测是 neutral，你也必须在末尾强行输出 以保护听障用户！\n"
         )
 
     messages = [{"role": "system", "content": system_prompt}]
