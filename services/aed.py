@@ -330,7 +330,7 @@ def load_aed_model():
             logger.info("正在加载环境音分类 AED 模型...")
             _aed_pipeline = pipeline(
                 task='audio-classification', 
-                model='damo/speech_ced_base'
+                model='iic/speech_ced_base'
             )
             logger.info("✅ AED 模型加载成功！")
         except ImportError:

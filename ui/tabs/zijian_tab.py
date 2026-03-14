@@ -10,7 +10,7 @@ def create_zijian_tab():
     创建字见 Tab，使用 Iframe 嵌入外部应用
     注意：需要先将字见部署到 Vercel，获取 HTTPS 域名后替换 ZIJIAN_URL
     """
-    # 填入你刚刚大功告成的专属域名！
+   
     ZIJIAN_URL = "https://zijian-main.vercel.app"
     
     with gr.TabItem("📖 字见 (无障碍识字)"):
